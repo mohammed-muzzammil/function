@@ -1,0 +1,270 @@
+Data Pre Processing App 
+
+Function Structure.
+
+
+missing value treatment function - 
+	# Give all missing value options like treat using mean , median , mode.
+	# Retrive the temporary csv file in a dataframe
+	# Then call the respecive function accordingly.
+	# Store the dataframe to a temporary csv file.
+	# Then return the Data Frame to the main function.
+	
+Outlier treatment function -
+	# Give all outlier treatment options like using Zscore, IQR.
+	# Retrive the temporary csv file in a dataframe
+	# Then call the respecive function accordingly.
+	# Store the dataframe to a temporary csv file.
+	# Then return the Data Frame to the main function.
+	
+Feature Scaling Function -
+	# Give all Feature Scaling Options like using Mix max scalar, robust etc.
+	# Retrive the temporary csv file in a dataframe
+	# Then call the respecive function accordingly.
+	# Store the dataframe to a temporary csv file.
+	# Then return the Data Frame to the main function.
+	
+Data Import-
+	# Give all data import options like xlsx, csv , oracle.
+	# if option == Xlsx then.
+		--Code--
+		
+		uploaded_file = st.sidebar.file_uploader("Choose a file", type="xlsx")
+		if uploaded_file:
+		
+            df = pd.read_excel(uploaded_file)
+            st.dataframe(df)
+            df.to_csv(path, index=False)
+            return df
+	
+	# if option == csv then
+
+		uploaded_file = st.sidebar.file_uploader("Choose a file", type="csv")
+		
+		if uploaded_file:
+		
+            df = pd.read_csv(uploaded_file)
+            st.dataframe(df)
+            df.to_csv(path, index=False)
+            return df
+		
+
+		
+	# if option == oracle then.
+	
+	
+			st.info("Enter Oracle Database information")
+
+            user=st.text_input("Enter User name ")
+            passwd=st.text_input("Enter Password ", type="password")
+            host=st.text_input("Enter Host Address")
+            port=st.text_input("Enter Port number")
+            query =st.text_input("Enter the query for the desired data")
+
+
+            if st.button("Connect"):
+
+
+                con_query="{}/{}@{}:{}/ORCL".format(user,passwd,host,port)
+
+                con=cx_Oracle.connect(con_query)
+
+                if con!=None:
+				
+                    st.info("Connection Established Successfully")
+                    df = pd.read_sql(query,con)
+                    st.dataframe(df)
+                    df.to_csv(path, index=False)
+                    return df
+	
+Data Export -
+
+	# Give all data Export options like xlsx, csv , oracle.
+	# Retrive the temporary csv file in a dataframe
+	
+	if option = csv then:
+	
+	st.sidebar.markdown(get_table_download_link_csv(df), unsafe_allow_html=True)
+                return 0
+	
+	if option = xlsx then :
+	
+	st.sidebar.markdown(get_table_download_link_xlsx(df), unsafe_allow_html=True)
+                return 0
+				
+				
+	if option = oracle:
+		
+		st.info("Enter Oracle Database information")
+
+            users=st.text_input("Enter Users name ")
+            passwd=st.text_input("Enter Password ", type="password")
+            host=st.text_input("Enter Host Address")
+            port=st.text_input("Enter Port number")
+            table=st.text_input("Enter the name of table to create, if table exist it'll be replaced")
+            if st.button("Connect"):
+                df = pd.read_csv(path)
+                conn = create_engine('oracle+cx_oracle://{}:{}@{}:{}/ORCL'.format(users,passwd,host,port))
+                df.to_sql('{}'.format(table), conn, if_exists='replace')
+                #con_query="{}/{}@{}:{}/ORCL".format(user,passwd,host,port)
+                #con=cx_Oracle.connect(con_query)
+                if conn!=None:
+                    st.info("Connection Established Successfully and Table Inserted")
+		
+		
+		
+Main Option Function -
+
+	# Give Options for missing value, outlier treatment, Feature Scaling.
+	# Then Return the option choosen by user to the main function.
+
+
+
+
+main function - 
+
+	# Call Data import().
+	# Store the dataframe to a temporary file.
+	
+	# Call Main Option Function.
+	# Then Call the Missing value etc functions based on user input.
+	# Pass the Data Frame to the function.
+	
+	# for ex - if Main Options Function Returned Outlier Treatement then.
+	# Call Outlier Treatement Function (Dataframe).
+	
+	# Call Data Export Function.
+	# Pass the Dataframe.
+	
+	
+	
+	
+	
+Mean Function - 
+	# If user Choose to treat missing value using mean then call this function from missing value treatment function.
+	# Pass the Data frame to this function.
+	# Process the data frame using mean.
+	# Return the Data Frame to the missing value treatment function.
+	
+	
+Median Function - 
+	# If user Choose to treat missing value using median then call this function from missing value treatment function.
+	# Pass the Data frame to this function.
+	# Process the data frame using median.
+	# Return the Data Frame to the missing value treatment function.
+	
+	
+Mode Function - 
+	# If user Choose to treat missing value using mode then call this function from missing value treatment function.
+	# Pass the Data frame to this function.
+	# Process the data frame using mode.
+	# Return the Data Frame to the missing value treatment function.
+	
+	
+iqr Function - 
+	# If User Choose to treat Outliers using IQR Method then call this function from Outlier Function.
+	# PAss the Dataframe to this function
+	# Ask the user to input the colunmn name from which the outlier is to be removed.
+	# Process the dataframe.
+	# Return the Dataframe to the Outlier Function.
+	
+	
+Z Score Function - 
+	# If User Choose to treat Outliers using Z Score Method then call this function from Outlier Function.
+	# PAss the Dataframe to this function
+	# Ask the user to input the colunmn name from which the outlier is to be removed.
+	# Process the dataframe.
+	# Return the Dataframe to the Outlier Function.
+	
+	
+Robust Scalar Function.
+	# If user choose to scale the data using Robust Scalar method then call this function from Feature Scaling Function.
+	# Pass the Dataframe to this function.
+	# Process the Data Frame.
+	# Return  The Dataframe to the Feature Scaling Function.
+	
+	# Same for Min max, Max absolute, Standard Scalar. Functions.
+	
+	
+	
+Data Export  functions - 
+
+	# Code
+	
+	
+def get_table_download_link_csv(df):
+try:
+	
+	"""Generates a link allowing the data in a given panda dataframe to be downloaded
+	in:  dataframes
+	out: href string
+	"""
+	csv = df.to_csv(index=False)
+	b64 = base64.b64encode(
+		csv.encode()
+	).decode()  # some strings <-> bytes conversions necessary here
+	return f'<a href="data:file/csv;base64,{b64}" download="myfilename.csv">Download csv file</a>'
+
+except Exception as e:
+	st.write("Oops!", e.__class__, "occurred.")
+	return df
+
+
+
+def to_excel(df):
+    try:
+        
+        output = BytesIO()
+        writer = pd.ExcelWriter(output, engine='xlsxwriter')
+        df.to_excel(writer)
+        writer.save()
+        processed_data = output.getvalue()
+        return processed_data
+    
+    
+    except Exception as e:
+        st.write("Oops!", e.__class__, "occurred.")
+        return df
+
+
+
+def get_table_download_link_xlsx(df):
+    try:
+        
+        
+        """Generates a link allowing the data in a given panda dataframe to be downloaded
+        in:  dataframe
+        out: href string
+        """
+        val = to_excel(df)
+        b64 = base64.b64encode(val)  # val looks like b'...'
+        return f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="dataprep.xlsx">Download xlsx file</a>' # decode b'abc' => abc
+    
+
+	
+	
+	
+imports for the application/octet-stream
+
+import streamlit as st
+import pandas as pd
+import numpy as np
+import xlrd
+import xlsxwriter
+from sklearn.impute import SimpleImputer
+from sklearn.impute import KNNImputer
+import base64
+from io import BytesIO
+import cx_Oracle
+import re
+import smtplib
+import os
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email import encoders
+#from sqlalchemy import types, create_engine
+import urllib.request
+
+
+	
